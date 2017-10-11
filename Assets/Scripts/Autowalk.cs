@@ -64,7 +64,6 @@ public class Autowalk : MonoBehaviour
 
     void Update()
     {
-		Debug.Log (GvrControllerInput.IsTouching);
         // Walk when the Cardboard Trigger is used 
 		if (walkWhenTriggered && !walkWhenLookDown && !isWalking && GvrControllerInput.IsTouching)
         {
