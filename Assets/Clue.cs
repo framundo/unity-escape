@@ -17,9 +17,11 @@ public class Clue : MonoBehaviour {
 	}
 
 	public void PickUp() {
-		if (pickedUp)
+		if (pickedUp) {
+			Inventory.instance.SelectObject(this.gameObject);
 			return;
+		}
 		pickedUp = true;
-		Inventory.instance.addObject (this.gameObject);
+		Inventory.instance.AddObject (this.gameObject);
 	}
 }

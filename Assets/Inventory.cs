@@ -8,14 +8,17 @@ public class Inventory : MonoBehaviour {
 	public int rows = 3;
 	public int cols = 3;
 	public float cellSize = 0.2f;
+	public GameObject selectedObj;
+	public GameObject selectSphere;
 
-	public GameObject[,] objects;
+	public GameObject[] objects;
 	private int count = 0;
 
 	// Use this for initialization
 	void Start () {
 		instance = this;
-		objects = new GameObject[rows, cols];
+		objects = new GameObject[rows * cols];
+		selectSphere.SetActive (false);
 	}
 	
 	// Update is called once per frame
@@ -23,13 +26,43 @@ public class Inventory : MonoBehaviour {
 		
 	}
 
-	public void addObject(GameObject obj) {
+	public void AddObject(GameObject obj) {
 		int row = (int) (count / rows);
 		int col = (int) (count % cols);
-		objects[row, col] = obj;
-		float x = col * cellSize;
-		float z = row * cellSize;
-		obj.transform.position = new Vector3 (x, this.transform.position.y, z);
+		objects[count] = obj;
+		float x = col * cellSize - cellSize * cols/2;
+		float y = row * cellSize - cellSize * rows/2;
+		obj.transform.SetParent (this.transform, true);
+		obj.transform.localPosition = new Vector3 (x, y, 0);
 		count++;
+	}
+
+	public void SelectObject(GameObject obj) {
+		if(ReferenceEquals(obj, selectedObj)) {
+			selectedObj = null;
+			selectSphere.SetActive(false);
+			return;
+		}
+		selectedObj = obj;
+		selectSphere.SetActive (true);
+		selectSphere.transform.position = obj.transform.position;
+	}
+
+	public void Use(GameObject obj) {
+		int index = ObjectIndex (obj);
+		if (index < 0)
+			return;
+		objects[index] = null;
+		selectSphere.SetActive (false);
+		Destroy(obj);
+	}
+
+	int ObjectIndex(GameObject obj) {
+		for (int i = 0; i < objects.Length; i++) {
+			if(GameObject.ReferenceEquals(obj, objects[i])) {
+				return i;
+			}
+		}
+		return -1;
 	}
 }
